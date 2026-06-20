@@ -1,4 +1,5 @@
 package com.tutorial.shoppingcart;
+import java.math.BigDecimal;
 import java.util.Map;
 
 
@@ -27,7 +28,15 @@ public class ShoppingCart {
         this.cartItems.remove(productId);
     }
 
-    public void calculateSubTotal() {}
+    public BigDecimal calculateSubTotal() {
+        BigDecimal total = new BigDecimal("0");
+        for (String productId : this.cartItems.keySet()) {
+            CartItem cartItem = this.cartItems.get(productId);
+            BigDecimal result = cartItem.Product.getPrice().multiply(BigDecimal.valueOf(cartItem.quantity));
+            total.add(result);
+        }
+        return total;
+    }
 
     public void clear() {
         this.cartItems.clear();
