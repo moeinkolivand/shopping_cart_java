@@ -1,12 +1,11 @@
 package com.tutorial.shoppingcart;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
+
 
 public class ShoppingCart {
 
     private Map<String, Product> products;
-    private Map<String, Integer> catalog;
+    private Map<String, CartItem> cartItems;
 
     public ShoppingCart(Map<String, Product> products) {
         this.products = products;
@@ -17,31 +16,25 @@ public class ShoppingCart {
         if (product.getStock() - quantity < 0) {
             throw new ProductOutOfStock("Product With Id: " + productId + " , Is Out Of Stock");
         }
-        this.catalog.merge(productId, quantity, Integer::sum);
+        CartItem cartItem = this.cartItems.get(productId);
+        cartItem.Product = product;
+        cartItem.quantity += quantity;
+        this.cartItems.put(productId, cartItem);
     }
 
     public void removeItem(String productId) throws ProductNotFound {
         this.findProduct(productId);
-        this.catalog.remove(productId);
+        this.cartItems.remove(productId);
     }
 
     public void calculateSubTotal() {}
 
     public void clear() {
-        this.catalog.clear();
+        this.cartItems.clear();
     }
 
-    public ArrayList<Product> getItems() {
-        Set<String> productIdies = this.catalog.keySet();
-        ArrayList<Product> products = new ArrayList<>();
-        for (String key : productIdies) {
-            products.add(this.findProduct(key));
-        }
-        return products;
-    }
-
-    public void addNewProduct(Product product) {
-        this.catalog.put(product.getId(), product.getStock());
+    public Map<String, CartItem> getItems() {
+        return this.cartItems;
     }
 
     private Product findProduct(String productId) throws ProductNotFound {
@@ -52,4 +45,3 @@ public class ShoppingCart {
         return product;
     }
 }
-
